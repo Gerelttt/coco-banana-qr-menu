@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coco Banana · QR Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0a0015;
+      --bg-alt: #110015;
+      --bg-soft: #1a1025;
+      --neon-pink: #ec4899;
+      --neon-blue: #38bdf8;
+      --neon-purple: #a855f7;
+      --lux-gold: #facc15;
+      --text-main: #f9fafb;
+      --text-muted: #cbd5e1;
+      --danger: #fb7185;
+      --success: #22c55e;
+      --border-soft: rgba(148,163,184,0.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(56, 189, 248, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+        linear-gradient(135deg, #0f001a 0%, #1a0f2e 40%, #0a1429 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 22px 16px 36px;
+    }
+
+    .logo-wrap {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .logo-text-main {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 0 22px rgba(248,250,252,0.55);
+    }
+
+    .logo-text-sub {
+      font-family: "Pacifico", cursive;
+      font-size: 26px;
+      margin-top: -4px;
+      color: var(--neon-pink);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 14px rgba(236,72,153,0.9),
+        0 0 26px rgba(248,113,113,0.6);
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .glow-soft { box-shadow: 0 0 12px rgba(168,85,247,0.45); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: linear-gradient(90deg, rgba(236,72,153,0.16), rgba(56,189,248,0.16));
+      border: 1px solid var(--border-soft);
+      color: var(--neon-blue);
+    }
+
+    /* ===== Flash deal bar ===== */
+    .flash-bar {
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(236,72,153,0.33), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(56,189,248,0.18), transparent 60%),
+        rgba(15,10,25,0.98);
+      border: 1px solid var(--border-soft);
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .flash-bar.inactive {
+      opacity: 0.7;
+    }
+
+    .flash-bar.active {
+      animation: subtleGlow 2s infinite;
+      border-color: rgba(248, 113, 113, 0.6);
+    }
+
+    .flash-bar.ending-soon {
+      animation: urgentPulse 1s infinite;
+      border-color: rgba(248, 113, 113, 0.8);
+    }
+
+    @keyframes subtleGlow {
+      0%, 100% {
+        box-shadow: 0 0 12px rgba(248, 113, 113, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(248, 113, 113, 0.8);
+      }
+    }
+
+    @keyframes urgentPulse {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(248, 113, 113, 0.6);
+      }
+      50% {
+        box-shadow: 0 0 25px rgba(248, 113, 113, 1);
+      }
+    }
+
+    .flash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .flash-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flash-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #f97316;
+      box-shadow: 0 0 16px rgba(248,113,113,0.9);
+      animation: pulse 1.25s infinite;
+    }
+
+    .flash-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      font-size: 12px;
+    }
+
+    .flash-item-name {
+      font-weight: 600;
+    }
+
+    .flash-item-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .flash-timer {
+      text-align: right;
+    }
+
+    .flash-timer-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .flash-timer-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f97316;
+    }
+
+    .flash-meter {
+      margin-top: 8px;
+      width: 100%;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      overflow: hidden;
+    }
+
+    .flash-meter-fill {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f97316, #eab308);
+      transform-origin: right center;
+      transform: scaleX(0);
+      transition: transform 0.5s linear;
+    }
+
+    .flash-admin-row {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      align-items: center;
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    /* ===== Tabs ===== */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .tab-btn {
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      border: 1px solid var(--border-soft);
+      background: rgba(10,10,25,0.9);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background: rgba(30,41,59,0.9);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* ===== Sections & cards ===== */
+    .section {
+      margin-bottom: 18px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #e5e7eb;
+    }
+
+    .section-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      padding: 10px 12px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top left, rgba(108,23,148,0.45), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(24,0,33,0.95), rgba(10,0,20,1));
+      border: 1px solid rgba(148,163,184,0.35);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      background: rgba(56,48,81,0.9);
+      box-shadow:
+        0 0 12px rgba(248,113,113,0.55),
+        0 0 28px rgba(168,85,247,0.55);
+      transform: translateY(-2px);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .card:hover::before {
+      left: 100%;
+    }
+
+    .card-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .card-price {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--neon-blue);
+      white-space: nowrap;
+    }
+
+    .card-price .strike {
+      text-decoration: line-through;
+      opacity: 0.6;
+      margin-right: 4px;
+    }
+
+    .card-price .discount {
+      color: var(--neon-pink);
+      font-weight: 700;
+    }
+
+    /* Popular item badges */
+    .popular-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--neon-pink);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: bold;
+      transform: rotate(5deg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* ===== Spin sections ===== */
+    .spin-wrap {
+      margin-top: 6px;
+    }
+
+    .spin-panel {
+      padding: 12px 14px 16px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.25), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(236,72,153,0.24), transparent 60%),
+        rgba(8,8,24,0.98);
+      border: 1px solid var(--border-soft);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .gold-spin-panel {
+      background:
+        radial-gradient(circle at top left, rgba(250,204,21,0.25), transparent 65%),
+        radial-gradient(circle at bottom right, rgba(56,189,248,0.18), transparent 60%),
+        linear-gradient(135deg, #0b0820 0%, #1b1030 40%, #050814 100%);
+      border: 1.5px solid rgba(250,204,21,0.65);
+      box-shadow:
+        0 0 26px rgba(250,204,21,0.35),
+        0 0 40px rgba(24,24,60,0.8);
+    }
+
+    .spin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .spin-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .spin-title.gold {
+      color: var(--lux-gold);
+      text-shadow: 0 0 12px rgba(250,204,21,0.65);
+    }
+
+    .spin-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 8px auto 6px;
+    }
+
+    .spin-wheel,
+    .golden-wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(0,0,0,0.5);
+      border: 2px solid rgba(15,23,42,0.9);
+      position: relative;
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+
+    .spin-wheel {
+      background: conic-gradient(
+        from 0deg,
+        var(--neon-pink) 0deg 60deg,
+        var(--neon-blue) 60deg 120deg,
+        var(--neon-purple) 120deg 180deg,
+        var(--lux-gold) 180deg 240deg,
+        var(--success) 240deg 300deg,
+        var(--danger) 300deg 360deg
+      );
+    }
+
+    .golden-wheel {
+      background: conic-gradient(
+        from 0deg,
+        #facc15 0deg 40deg,
+        #f97316 40deg 80deg,
+        #7c2d12 80deg 120deg,
+        #facc15 120deg 160deg,
+        #f97316 160deg 200deg,
+        #7c2d12 200deg 240deg,
+        #facc15 240deg 280deg,
+        #f97316 280deg 320deg,
+        #7c2d12 320deg 360deg
+      );
+      border-color: rgba(250,204,21,0.9);
+      box-shadow:
+        0 0 30px rgba(250,204,21,0.6),
+        inset 0 0 20px rgba(0,0,0,0.45);
+    }
+
+    .wheel-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: rgba(15,23,42,0.9);
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.8);
+      z-index: 10;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 25px solid var(--neon-pink);
+      z-index: 20;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.7));
+    }
+
+    .spin-wheel.spinning,
+    .golden-wheel.spinning {
+      animation: spin 4s cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+
+    .spin-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+      background: radial-gradient(circle at top, var(--neon-purple), var(--neon-pink));
+      color: #fff;
+      text-shadow: 0 0 10px rgba(15,23,42,0.9);
+      box-shadow: 0 0 26px rgba(236,72,153,0.7);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .spin-btn.gold {
+      background: radial-gradient(circle at top, #facc15, #f97316);
+      box-shadow: 0 0 30px rgba(250,204,21,0.8);
+      color: #111827;
+    }
+
+    .spin-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 0 18px rgba(236,72,153,0.5);
+    }
+
+    .spin-btn.gold:active {
+      box-shadow: 0 0 22px rgba(250,204,21,0.7);
+    }
+
+    .spin-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .spin-btn.spinning {
+      animation: spinPulse 0.9s infinite;
+    }
+
+    .spin-result {
+      margin-top: 10px;
+      min-height: 34px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .spin-result-main {
+      font-weight: 600;
+    }
+
+    .spin-result-main.big {
+      font-size: 18px;
+      color: var(--lux-gold);
+      text-shadow:
+        0 0 10px rgba(250,204,21,0.7),
+        0 0 22px rgba(236,72,153,0.7);
+    }
+
+    .spin-result-main.mid {
+      color: var(--neon-blue);
+    }
+
+    .spin-result-main.low {
+      color: var(--text-muted);
+    }
+
+    .spin-result-note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Silver prizes grid (now with highlighted big prizes) */
+    .silver-prizes {
+      margin-top: 14px;
+    }
+
+    .silver-prizes-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+      color: var(--neon-blue);
+    }
+
+    .silver-prizes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    /* Golden prizes premium grid */
+    .premium-prizes-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .prize-item {
+      padding: 10px 13px;
+      border-radius: 12px;
+      background: rgba(15,23,42,0.75);
+      border: 1px solid rgba(148,163,184,0.4);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .prize-item.big-prize {
+      background: linear-gradient(135deg,
+        rgba(250,204,21,0.22),
+        rgba(248,113,113,0.17));
+      border: 2px solid rgba(250,204,21,0.9);
+      box-shadow:
+        0 0 20px rgba(250,204,21,0.6),
+        inset 0 0 15px rgba(250,204,21,0.18);
+      animation: luxuryPulse 4s infinite;
+    }
+
+    .prize-item.big-prize::before {
+      content: '✨';
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .prize-text {
+      font-weight: 600;
+      margin-left: 22px;
+      font-size: 13px;
+    }
+
+    .prize-item.big-prize .prize-text {
+      color: var(--lux-gold);
+      text-shadow: 0 0 10px rgba(250,204,21,0.7);
+    }
+
+    .prize-value {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      margin-left: 22px;
+    }
+
+    .prize-item.big-prize .prize-value {
+      color: #f97316;
+      font-weight: 500;
+    }
+
+    .gold-prizes-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin: 14px 0 8px;
+      color: var(--lux-gold);
+    }
+
+    @keyframes luxuryPulse {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(250,204,21,0.5);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(250,204,21,0.9);
+        transform: scale(1.02);
+      }
+    }
+
+    /* Spin Code Input (for each spin) */
+    .spin-code-panel {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(5,5,20,0.95);
+      border: 1px dashed var(--border-soft);
+      text-align: center;
+    }
+
+    .spin-code-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      justify-content: center;
+    }
+
+    .spin-code-input input {
+      width: 70px;
+      padding: 7px;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.95);
+      color: var(--text-main);
+      font-size: 15px;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .spin-code-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--neon-purple);
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s ease;
+    }
+
+    .spin-code-btn:hover {
+      background: var(--neon-pink);
+    }
+
+    .spin-code-msg {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .spin-code-error {
+      color: var(--danger) !important;
+    }
+
+    .spin-code-success {
+      color: var(--success) !important;
+    }
+
+    /* Loading spinner */
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top: 2px solid var(--neon-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    /* ===== Admin ===== */
+    .admin-bar {
+      margin-top: 10px;
+      text-align: right;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .admin-link {
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s ease;
+    }
+
+    .admin-link:hover {
+      color: var(--neon-blue);
+    }
+
+    .admin-panel {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(5,5,20,0.95);
+      border: 1px dashed var(--border-soft);
+      font-size: 12px;
+      display: none;
+    }
+
+    .admin-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .switch {
+      position: relative;
+      width: 34px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--border-soft);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .switch:hover {
+      background: rgba(30,41,59,0.9);
+    }
+
+    .switch-knob {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #f9fafb;
+      transition: transform 0.16s ease-out, background-color 0.16s ease-out;
+    }
+
+    .switch.on {
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+    }
+
+    .switch.on .switch-knob {
+      transform: translateX(14px);
+      background: #0f172a;
+    }
+
+    .admin-input {
+      width: 80px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.95);
+      color: var(--text-main);
+      font-size: 12px;
+    }
+
+    .admin-select {
+      width: 160px;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.95);
+      color: var(--text-main);
+      font-size: 12px;
+    }
+
+    .admin-badge {
+      font-size: 11px;
+      color: var(--success);
+      margin-top: 4px;
+    }
+
+    .admin-login {
+      margin-top: 6px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .admin-login input {
+      flex: 1;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15,23,42,0.95);
+      color: var(--text-main);
+      font-size: 12px;
+    }
+
+    .admin-login button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: none;
+      background: var(--neon-purple);
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.2s ease;
+    }
+
+    .admin-login button:hover {
+      background: var(--neon-pink);
+    }
+
+    #adminFlashSummary {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      text-align: center;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Quick nav */
+    .quick-nav {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .quick-nav button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--neon-purple);
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 0 14px rgba(0,0,0,0.6);
+    }
+
+    .quick-nav button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Accessibility */
+    .tab-btn:focus,
+    .spin-btn:focus,
+    .flash-toggle-btn:focus,
+    .admin-link:focus,
+    .switch:focus {
+      outline: 2px solid var(--neon-blue);
+      outline-offset: 2px;
+    }
+
+    .tab-btn:focus-visible,
+    .spin-btn:focus-visible,
+    .admin-link:focus-visible {
+      outline: 3px solid var(--neon-blue);
+      outline-offset: 2px;
+    }
+
+    button:not(:disabled) {
+      cursor: pointer;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.65; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes spinPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(1440deg); }
+    }
+
+    @media (min-width: 700px) {
+      .app { margin-top: 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .logo-text-main {
+        font-size: 32px;
+        letter-spacing: 0.24em;
+      }
+      
+      .logo-text-sub {
+        font-size: 22px;
+      }
+      
+      .tabs {
+        gap: 6px;
+      }
+      
+      .tab-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .wheel-container {
+        width: 170px;
+        height: 170px;
+      }
+
+      .quick-nav {
+        bottom: 12px;
+        right: 12px;
+      }
+
+      .quick-nav button {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .app {
+        padding: 16px 12px 24px;
+      }
+      
+      .logo-text-main {
+        font-size: 28px;
+      }
+      
+      .logo-text-sub {
+        font-size: 20px;
+      }
+      
+      .tabs {
+        justify-content: center;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      :root {
+        --text-main: #ffffff;
+        --text-muted: #cccccc;
+        --border-soft: rgba(255,255,255,0.6);
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="logo-wrap">
+    <div class="logo-text-main">COCO</div>
+    <div class="logo-text-sub">BANANA</div>
+  </div>
+  <div class="tagline">
+    Menu · Ulaanbaatar · 21+ · Захиалга өгөх, төлбөр төлөхийг хүсвэл зөөгчид хэлнэ үү.
+  </div>
+
+  <!-- Flash Deal -->
+  <div id="flashBar" class="flash-bar inactive">
+    <div class="flash-header">
+      <div class="flash-title">
+        <div class="flash-dot"></div>
+        <span>Flash Deal</span>
+      </div>
+      <div class="pill">CoCo Banana Ulaanbaatar</div>
+    </div>
+    <div class="flash-body">
+      <div>
+        <div id="flashItemName" class="flash-item-name">Одоогоор хямдралгүй</div>
+        <div id="flashItemMeta" class="flash-item-meta">
+          Хямдрал идэвхжих үед энд мэдээлэл гарна.
+        </div>
+      </div>
+      <div class="flash-timer">
+        <div class="flash-timer-label">Time left</div>
+        <div id="flashTimerValue" class="flash-timer-value">--:--</div>
+      </div>
+    </div>
+    <div class="flash-meter">
+      <div id="flashMeterFill" class="flash-meter-fill"></div>
+    </div>
+    <div class="flash-admin-row">
+      <div>CoCo Banana Ulaanbaatar</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="all">All</button>
+    <button class="tab-btn" data-tab="cocktails">Cocktails</button>
+    <button class="tab-btn" data-tab="beer">Beer</button>
+    <button class="tab-btn" data-tab="whiskey">Whiskey</button>
+    <button class="tab-btn" data-tab="vodka">Vodka</button>
+    <button class="tab-btn" data-tab="gin">Gin</button>
+    <button class="tab-btn" data-tab="tequila">Tequila</button>
+    <button class="tab-btn" data-tab="cognac">Cognac</button>
+    <button class="tab-btn" data-tab="wine">Wine</button>
+    <button class="tab-btn" data-tab="liquor">Liquor</button>
+    <button class="tab-btn" data-tab="sets">Sets</button>
+    <button class="tab-btn" data-tab="snacks">Snacks</button>
+    <button class="tab-btn" data-tab="softdrinks">Soft Drinks</button>
+  </div>
+
+  <!-- Menu sections container -->
+  <div id="menuContainer"></div>
+
+  <!-- SILVER SPIN -->
+  <div class="spin-wrap" id="silverSpinSection">
+    <div class="spin-panel">
+      <div class="spin-header">
+        <div>
+          <div class="spin-title">SILVER SPIN</div>
+          <div class="spin-sub">
+            1 удаа тоглоход 10,000₮ · Өндөр Шагнал · Төлбөр төлсний дараа зөөгч код оруулж spin-ыг идэвхжүүлнэ.
+          </div>
+        </div>
+        <div class="pill">Ажилтны код шаардлагатай</div>
+      </div>
+
+      <div class="wheel-container">
+        <div id="spinWheel" class="spin-wheel"></div>
+        <div class="wheel-center"></div>
+        <div class="wheel-pointer"></div>
+      </div>
+
+      <!-- Spin Code Input (Silver) -->
+      <div class="spin-code-panel" id="spinCodePanel">
+        <div style="font-size: 13px; color: var(--text-muted);">
+          Төлбөр төлсний дараа зөөгч Silver Spin код оруулна уу
+        </div>
+        <div class="spin-code-input">
+          <input type="password" id="spinCodeInput" maxlength="6" placeholder="000000" />
+          <button class="spin-code-btn" id="spinCodeBtn">Хүрд идэвхжүүлэх</button>
+        </div>
+        <div class="spin-code-msg" id="spinCodeMsg">
+          Зөвхөн төлбөр төлсний дараа л spin хийх боломжтой.
+        </div>
+      </div>
+
+      <button class="spin-btn" id="spinButton" disabled>
+        Хүрд эргүүлэхийн тулд код хийнэ үү
+      </button>
+      <div class="spin-result" id="spinResult">
+        <span class="spin-result-main">Төлбөр төлсний дараа Silver spin хийх боломжтой</span><br/>
+        <span class="spin-result-note">
+          Зөөгчтэй холбогдож төлбөрөө төлнө үү.
+        </span>
+      </div>
+
+      <!-- Silver prize list -->
+      <div class="silver-prizes" id="silverPrizes">
+        <div class="silver-prizes-title">SILVER SPIN PRIZES</div>
+        <div class="silver-prizes-grid" id="silverPrizesGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOLDEN SPIN -->
+  <div class="spin-wrap" id="goldSpinSection">
+    <div class="spin-panel gold-spin-panel">
+      <div class="spin-header">
+        <div>
+          <div class="spin-title gold">GOLDEN SPIN</div>
+          <div class="spin-sub">
+            1 удаа тоглоход 20,000₮ · Илүү том шагналууд · Төлбөр төлсний дараа зөөгч Golden Spin код оруулна.
+          </div>
+        </div>
+        <div class="pill">Premium Wheel</div>
+      </div>
+
+      <div class="wheel-container">
+        <div id="goldenWheel" class="golden-wheel"></div>
+        <div class="wheel-center"></div>
+        <div class="wheel-pointer"></div>
+      </div>
+
+      <!-- Spin Code Input (Gold) -->
+      <div class="spin-code-panel" id="goldCodePanel">
+        <div style="font-size: 13px; color: var(--text-muted);">
+          Golden Spin-д тоглохын өмнө зөөгч код оруулна.
+        </div>
+        <div class="spin-code-input">
+          <input type="password" id="goldCodeInput" maxlength="6" placeholder="000000" />
+          <button class="spin-code-btn" id="goldCodeBtn">Хүрд идэвхжүүлэх</button>
+        </div>
+        <div class="spin-code-msg" id="goldCodeMsg">
+          Төлбөр төлсний дараа Golden spin идэвхжинэ.
+        </div>
+      </div>
+
+      <button class="spin-btn gold" id="goldSpinButton" disabled>
+        Golden Spin хийхийн тулд код хийнэ үү
+      </button>
+      <div class="spin-result" id="goldSpinResult">
+        <span class="spin-result-main">Premium шагналуудаа шалгах уу?</span><br/>
+        <span class="spin-result-note">
+          Төлбөрөө төлөөд Golden Spin хийж үзээрэй.
+        </span>
+      </div>
+
+      <!-- Golden prize list -->
+      <div class="gold-prizes-title">GOLDEN SPIN PRIZES</div>
+      <div class="premium-prizes-grid" id="goldPrizesGrid"></div>
+    </div>
+  </div>
+
+  <!-- Admin bar -->
+  <div class="admin-bar">
+    Staff only: <span class="admin-link" id="adminToggleLink">enter admin code</span>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <div><strong>Admin panel</strong> · for owner / manager / Ndoro Ajeng.</div>
+    <div class="admin-badge" id="adminStatus">Locked</div>
+
+    <div class="admin-row">
+      <div>Flash deals active</div>
+      <div class="switch" id="adminFlashSwitch"><div class="switch-knob"></div></div>
+    </div>
+
+    <div class="admin-row">
+      <div>Show spin sections</div>
+      <div class="switch" id="adminSpinSwitch"><div class="switch-knob"></div></div>
+    </div>
+
+    <div class="admin-row">
+      <div>Flash duration (sec)</div>
+      <input id="adminFlashDuration" class="admin-input" type="number" min="20" max="7200" />
+    </div>
+
+    <div class="admin-row">
+      <div>Discount product</div>
+      <select id="adminDiscountProduct" class="admin-select">
+        <option value="">Select product</option>
+      </select>
+    </div>
+
+    <div class="admin-row">
+      <div>Discount percentage</div>
+      <input id="adminDiscountPercent" class="admin-input" type="number" min="5" max="50" placeholder="%" />
+    </div>
+
+    <div class="admin-row">
+      <div>Flash preset</div>
+      <select id="adminFlashPreset" class="admin-select">
+        <option value="">No preset</option>
+        <option value="Quick Boost">Quick Boost (2 min / 15%)</option>
+        <option value="Happy Hour">Happy Hour (60 min / 20%)</option>
+        <option value="Weekend Special">Weekend Special (120 min / 25%)</option>
+      </select>
+    </div>
+
+    <div id="adminFlashSummary">
+      No flash deal configured yet.
+    </div>
+
+    <div style="margin-top:6px;font-size:10px;color:var(--text-muted);">
+      Note: discount product & percent are for staff logic. Guests only see that a flash sale is active and the timer.
+    </div>
+  </div>
+
+  <div class="admin-panel" id="adminLoginPanel" style="display:none;">
+    <div><strong>Enter admin code</strong> · 6 digits</div>
+    <div class="admin-login">
+      <input type="password" id="adminCodeInput" maxlength="6" placeholder="000000" />
+      <button id="adminCodeBtn">Unlock</button>
+    </div>
+    <div id="adminLoginMsg" style="margin-top:4px;font-size:11px;color:var(--danger);display:none;">
+      Wrong code.
+    </div>
+  </div>
+
+  <div class="footer">
+    Энэхүү QR MENU нь зөвхөн үзэх, нэмэлт саналууд болон хямдралын саналд зориулагдсан бөгөөд,
+    захиалга болон төлбөрийг үргэлж таны үйлчилгээний ажилтан хариуцна.
+  </div>
+</div>
+
+<!-- Quick navigation floating buttons -->
+<div class="quick-nav">
+  <button onclick="scrollToSection('cocktails')" aria-label="Go to cocktails">🍸</button>
+  <button onclick="scrollToSection('beer')" aria-label="Go to beer">🍺</button>
+  <button onclick="scrollToSection('whiskey')" aria-label="Go to whiskey">🥃</button>
+  <button onclick="scrollToSection('snacks')" aria-label="Go to snacks">🥨</button>
+</div>
+
+<script>
+/* ========= VERSIONED CACHE FOR LOCAL STATE ========= */
+const CACHE_VERSION = '1.0.6';
+const STATE_KEY = 'cocoMenuState';
+const VERSION_KEY = 'cocoMenuCacheVersion';
+
+if (localStorage.getItem(VERSION_KEY) !== CACHE_VERSION) {
+  localStorage.removeItem(STATE_KEY);
+  localStorage.setItem(VERSION_KEY, CACHE_VERSION);
+}
+
+/* ========= SECURE SPIN CONFIG ========= */
+const SPIN_ACTIVATION_CODE = '032328';
+let isSilverSpinActivated = false;
+let isGoldSpinActivated = false;
+
+/* ========= DATA: MENU ========= */
+const MENU_DATA = [
+  {
+    category: 'cocktails',
+    title: 'Cocktails',
+    tag: 'Premium mixed drinks',
+    items: [
+      { name: 'Margarita', price: 34000, type: 'cocktail', popular: true },
+      { name: 'Negroni', price: 34000, type: 'cocktail' },
+      { name: 'Pornstar Martini', price: 34000, type: 'cocktail', popular: true },
+      { name: 'Manhattan', price: 34000, type: 'cocktail' },
+    ]
+  },
+  {
+    category: 'beer',
+    title: 'Beer',
+    tag: 'Chilled beers & soju',
+    items: [
+      { name: 'Altangobi', price: 11000, type: 'beer', popular: true },
+      { name: 'Tiger', price: 11000, type: 'beer' },
+      { name: 'Ooze', price: 12000, type: 'beer' },
+      { name: 'Heineken', price: 13000, type: 'beer' },
+      { name: 'Kirin', price: 13000, type: 'beer' },
+      { name: 'Chang', price: 13000, type: 'beer' },
+      { name: 'Tsingtao', price: 13000, type: 'beer' },
+      { name: 'Pearl River', price: 13000, type: 'beer' },
+      { name: 'Blue Moon', price: 13000, type: 'beer' },
+      { name: 'Asahi', price: 15000, type: 'beer' },
+      { name: 'Corona', price: 17000, type: 'beer', popular: true },
+      { name: 'Soju', price: 30000, type: 'beer' },
+    ]
+  },
+  {
+    category: 'whiskey',
+    title: 'Whiskey',
+    tag: 'Shot / double / bottle',
+    items: [
+      { name: 'Wild Turkey', priceText: '14K / 28K / 280K', type: 'spirit' },
+      { name: 'Ballantines', priceText: '14K / 28K / 280K', type: 'spirit' },
+      { name: 'Jameson', priceText: '15K / 30K / 300K', type: 'spirit', popular: true },
+      { name: 'Chivas 12 Years', priceText: '16K / 32K / 320K', type: 'spirit' },
+      { name: 'Chivas 18 Years', priceText: '10K / 40K / 400K', type: 'spirit' },
+      { name: 'Jack Daniel\'s', priceText: '30K / 60K / 300K', type: 'spirit' },
+      { name: 'Glenmorangie', priceText: '30K / 60K / 420K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'vodka',
+    title: 'Vodka',
+    tag: 'Shot / bottle',
+    items: [
+      { name: 'Eden 700ml', priceText: '17K / 119K', type: 'spirit' },
+      { name: 'Velvet 700ml', priceText: '17K / 119K', type: 'spirit' },
+      { name: 'Evok 700ml', priceText: '18K / 126K', type: 'spirit' },
+      { name: 'Finlandia 1L', priceText: '23K / 230K', type: 'spirit' },
+      { name: 'Absolut 1L', priceText: '25K / 250K', type: 'spirit' },
+      { name: 'Grey Goose 1L', priceText: '45K / 450K', type: 'spirit', popular: true },
+      { name: 'Beluga 1L', priceText: '46K / 460K', type: 'spirit' },
+      { name: 'Zubrowka Bison 700ml', priceText: '35K / 220K', type: 'spirit' },
+      { name: 'Zubrowka Biala 700ml', priceText: '35K / 220K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'gin',
+    title: 'Gin',
+    tag: 'Shot / bottle',
+    items: [
+      { name: 'Barrister 700ml', priceText: '26K / 182K', type: 'spirit' },
+      { name: 'Gordon\'s 1L', priceText: '27K / 270K', type: 'spirit' },
+      { name: 'Bombay 1L', priceText: '28K / 280K', type: 'spirit' },
+      { name: 'Bialowieski 700ml', priceText: '27K / 192K', type: 'spirit' },
+      { name: 'Bialowieski Malina 700ml', priceText: '27K / 192K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'tequila',
+    title: 'Tequila',
+    tag: 'Shot / bottle',
+    items: [
+      { name: 'Sierra', priceText: '24K / 240K', type: 'spirit' },
+      { name: 'Olmega', priceText: '26K / 182K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'cognac',
+    title: 'Cognac',
+    tag: 'Premium sips',
+    items: [
+      { name: 'Hennessy V.S 700ml', priceText: '65K / 455K', type: 'spirit' },
+      { name: 'Hennessy V.S.O.P 700ml', priceText: '100K / 700K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'wine',
+    title: 'Wine',
+    tag: 'Glass / bottle',
+    items: [
+      { name: 'Maison Castle', priceText: '13K / 97.5K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'liquor',
+    title: 'Liquor',
+    tag: 'Shot / bottle',
+    items: [
+      { name: 'Balley\'s 1L', priceText: '18K / 180K', type: 'spirit' },
+      { name: 'Grandmarnier 700ml', priceText: '40K / 280K', type: 'spirit' },
+      { name: 'Jägermeister 700ml', priceText: '27K / 189K', type: 'spirit' },
+    ]
+  },
+  {
+    category: 'sets',
+    title: 'Set Packages',
+    tag: 'Party bundles',
+    items: [
+      { name: 'Eden Vodka Set', price: 217000, type: 'set' },
+      { name: 'Velvet Vodka Set', price: 217000, type: 'set' },
+      { name: 'Evok Vodka Set', price: 224000, type: 'set' },
+      { name: 'Finlandia Vodka Set', price: 328000, type: 'set' },
+      { name: 'Absolut Vodka Set', price: 348000, type: 'set' },
+      { name: 'Grey Goose Vodka Set', price: 548000, type: 'set' },
+      { name: 'Beluga Vodka Set', price: 558000, type: 'set' },
+      { name: 'Ballantines Whiskey Set', price: 378000, type: 'set' },
+      { name: 'Jameson Whiskey Set', price: 398000, type: 'set' },
+      { name: 'Jack Daniel\'s Whiskey Set', price: 398000, type: 'set' },
+      { name: 'Chivas 12 Years Whiskey Set', price: 418000, type: 'set' },
+      { name: 'Chivas 18 Years Whiskey Set', price: 498000, type: 'set' },
+    ]
+  },
+  {
+    category: 'snacks',
+    title: 'Snacks',
+    tag: 'Perfect with drinks',
+    items: [
+      { name: 'Chips', price: 15000, type: 'snack', popular: true },
+      { name: 'Nuts', price: 7000, type: 'snack' },
+      { name: 'Gum', price: 5000, type: 'snack' },
+      { name: 'Merci', price: 35000, type: 'snack' },
+      { name: 'Toffifee', price: 15000, type: 'snack' },
+    ]
+  },
+  {
+    category: 'softdrinks',
+    title: 'Soft Drinks',
+    tag: 'Mixers & refreshments',
+    items: [
+      { name: 'Juice (Orange, Apple, Multifruit)', price: 4000, type: 'softdrink' },
+      { name: 'Bonaqua', price: 5000, type: 'softdrink' },
+      { name: 'Cola/Fanta/Sprite', price: 6500, type: 'softdrink' },
+      { name: 'Orgiluun', price: 6500, type: 'softdrink' },
+      { name: 'Red Bull Yellow', price: 7000, type: 'softdrink' },
+      { name: 'Red Bull Blue', price: 10000, type: 'softdrink', popular: true },
+    ]
+  },
+];
+
+/* ========= FLASH CONFIG & STATE ========= */
+let FLASH_DEALS_ACTIVE = false;
+let FLASH_DURATION_SECONDS = 60;
+let CURRENT_FLASH_ITEM = null;
+let CURRENT_DISCOUNT_PERCENT = 10;
+
+let flashTimeLeft = FLASH_DURATION_SECONDS;
+let flashInterval = null;
+let SHOW_SPIN = true;
+
+/* ========= SILVER SPIN PRIZES (tuned more for profit) ========= */
+// ≈ 4% big, 19% mid, 77% low (weights relative)
+const SILVER_SPIN_PRIZES = [
+  // BIG (Lower percentage as requested)
+  { label: 'FREE Soju', tier: 'big', weight: 4, value: '≈30,000₮' },
+  { label: 'FREE Cocktail', tier: 'big', weight: 4, value: '≈34,000₮' },
+  { label: 'FREE Merci Chocolate', tier: 'big', weight: 6, value: '≈35,000₮' },
+  { label: 'FREE Corona Beer', tier: 'big', weight: 6, value: '≈17,000₮' },
+  { label: 'FREE Shot', tier: 'big', weight: 5, value: '≈17,000₮' },
+
+  // MID
+  { label: 'FREE Altangobi Beer', tier: 'mid', weight: 22 },
+  { label: 'FREE Red Bull Blue', tier: 'mid', weight: 22 },
+  { label: 'FREE Chips', tier: 'mid', weight: 32 },
+  { label: 'FREE Toffifee', tier: 'mid', weight: 32 },
+  { label: 'FREE Mixed Nuts', tier: 'mid', weight: 40 },
+  { label: 'FREE Soft Drink', tier: 'mid', weight: 22 },
+  { label: 'Next Spin 50% OFF', tier: 'mid', weight: 26 },
+
+  // LOW
+  { label: 'FREE Gum', tier: 'low', weight: 90 },
+  { label: 'FREE Juice', tier: 'low', weight: 90 },
+  { label: 'FREE Bonaqua', tier: 'low', weight: 90 },
+  { label: 'FREE Red Bull Yellow', tier: 'low', weight: 60 },
+  { label: 'Try Again Later', tier: 'low', weight: 230 },
+  { label: 'Try Again', tier: 'low', weight: 230 },
+];
+
+/* ========= GOLDEN SPIN PRIZES ========= */
+const GOLDEN_SPIN_PRIZES = [
+  // BIG PRIZES (Lower percentage as requested)
+  { label: 'FREE Cocktail', tier: 'big', weight: 4, value: '≈34,000₮' },
+  { label: 'FREE Soju', tier: 'big', weight: 4, value: '≈30,000₮' },
+  { label: 'FREE Corona 2-pack', tier: 'big', weight: 3, value: '≈34,000₮' },
+  { label: 'FREE Merci Chocolate', tier: 'big', weight: 3, value: '≈35,000₮' },
+  { label: 'FREE Whiskey Shot + Beer', tier: 'big', weight: 2, value: '≈29,000₮' },
+
+  // PREMIUM PRIZES
+  { label: 'FREE Asahi', tier: 'normal', weight: 20, value: '≈15,000₮' },
+  { label: 'FREE Blue Moon', tier: 'normal', weight: 20, value: '≈13,000₮' },
+  { label: 'FREE Red Bull Blue', tier: 'normal', weight: 15 },
+  { label: 'FREE Chips', tier: 'normal', weight: 15 },
+  { label: 'FREE Altangobi Beer', tier: 'normal', weight: 15 },
+
+  // STANDARD
+  { label: 'FREE Corona', tier: 'normal', weight: 120 },
+  { label: 'FREE Asahi', tier: 'normal', weight: 100 },
+  { label: 'FREE Blue Moon', tier: 'normal', weight: 100 },
+  { label: 'FREE Toffifee', tier: 'normal', weight: 80 },
+  { label: 'FREE Mixed Nuts', tier: 'normal', weight: 80 },
+  { label: '50% OFF Next Spin', tier: 'normal', weight: 80 },
+  { label: 'Try Again', tier: 'normal', weight: 80 }
+];
+
+/* ========= FLASH PRESETS ========= */
+const FLASH_PRESETS = [
+  { name: "Quick Boost", duration: 120, discount: 15 },
+  { name: "Happy Hour", duration: 3600, discount: 20 },
+  { name: "Weekend Special", duration: 7200, discount: 25 }
+];
+
+/* ========= HELPERS ========= */
+
+function formatPrice(value) {
+  return (value / 1000) + 'K';
+}
+
+function scrollToSection(category) {
+  const section = document.querySelector(`.section[data-section="${category}"]`);
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/* ========= RENDER MENU ========= */
+
+const menuContainer = document.getElementById('menuContainer');
+
+function renderMenu() {
+  menuContainer.innerHTML = '';
+  MENU_DATA.forEach(section => {
+    const sectionEl = document.createElement('div');
+    sectionEl.className = 'section';
+    sectionEl.dataset.section = section.category;
+
+    const head = document.createElement('div');
+    head.className = 'section-head';
+    head.innerHTML = `
+      <div class="section-title">${section.title}</div>
+      <div class="section-tag">${section.tag || ''}</div>
+    `;
+    sectionEl.appendChild(head);
+
+    const list = document.createElement('div');
+    list.className = 'card-list';
+
+    section.items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.category = section.category;
+      card.dataset.name = item.name;
+
+      let priceText = item.priceText || (item.price ? formatPrice(item.price) + '₮' : '');
+      const basePriceAttr = item.price ? `data-base-price="${item.price}"` : '';
+      
+      // Apply discount if this is the flash deal item
+      if (FLASH_DEALS_ACTIVE && CURRENT_FLASH_ITEM === item.name && item.price) {
+        const discountedPrice = Math.round(item.price * (1 - CURRENT_DISCOUNT_PERCENT / 100));
+        priceText = `<span class="strike">${formatPrice(item.price)}₮</span> <span class="discount">${formatPrice(discountedPrice)}₮</span>`;
+      }
+
+      card.innerHTML = `
+        <div class="card-main">
+          <div>
+            <div class="card-name">${item.name}</div>
+          </div>
+          <div class="card-price" ${basePriceAttr}>${priceText}</div>
+        </div>
+      `;
+
+      if (item.popular) {
+        const badge = document.createElement('div');
+        badge.className = 'popular-badge';
+        badge.textContent = 'POPULAR';
+        card.appendChild(badge);
+      }
+
+      list.appendChild(card);
+    });
+
+    sectionEl.appendChild(list);
+    menuContainer.appendChild(sectionEl);
+  });
+}
+
+/* ========= TABS ========= */
+
+const tabsEl = document.getElementById('tabs');
+
+function setActiveTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  document.querySelectorAll('.section').forEach(sec => {
+    const cat = sec.dataset.section;
+    sec.style.display = (tab === 'all' || tab === cat) ? '' : 'none';
+  });
+}
+
+tabsEl.addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  setActiveTab(btn.dataset.tab);
+});
+
+/* ========= FLASH DEALS ========= */
+
+const flashItemName = document.getElementById('flashItemName');
+const flashItemMeta = document.getElementById('flashItemMeta');
+const flashTimerValue = document.getElementById('flashTimerValue');
+const flashMeterFill = document.getElementById('flashMeterFill');
+const flashBar = document.getElementById('flashBar');
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+function updateFlashUI() {
+  flashBar.classList.remove('active', 'ending-soon');
+
+  if (!FLASH_DEALS_ACTIVE) {
+    flashItemName.textContent = 'Одоогоор хямдралгүй';
+    flashItemMeta.textContent = 'Хямдрал идэвхжих үед энд мэдээлэл гарна.';
+    flashTimerValue.textContent = '--:--';
+    flashMeterFill.style.transform = 'scaleX(0)';
+    flashBar.classList.add('inactive');
+    return;
+  }
+
+  flashItemName.textContent = CURRENT_FLASH_ITEM || 'Хямдрал зарлагдлаа';
+  flashItemMeta.textContent = `${CURRENT_DISCOUNT_PERCENT}% хямдралтай`;
+  flashTimerValue.textContent = formatTime(flashTimeLeft);
+  const progress = flashTimeLeft / FLASH_DURATION_SECONDS;
+  flashMeterFill.style.transform = 'scaleX(' + progress + ')';
+  flashBar.classList.remove('inactive');
+  flashBar.classList.add('active');
+
+  if (flashTimeLeft <= 10 || flashTimeLeft <= FLASH_DURATION_SECONDS * 0.15) {
+    flashBar.classList.add('ending-soon');
+  }
+}
+
+function startFlashLoop() {
+  if (flashInterval) clearInterval(flashInterval);
+
+  if (!FLASH_DEALS_ACTIVE) {
+    updateFlashUI();
+    renderMenu(); // Re-render menu to remove discounts
+    return;
+  }
+
+  flashTimeLeft = FLASH_DURATION_SECONDS;
+  updateFlashUI();
+  renderMenu(); // Re-render menu to show discounts
+
+  flashInterval = setInterval(() => {
+    if (!FLASH_DEALS_ACTIVE) {
+      updateFlashUI();
+      renderMenu(); // Re-render menu to remove discounts
+      return;
+    }
+    flashTimeLeft--;
+    if (flashTimeLeft <= 0) {
+      FLASH_DEALS_ACTIVE = false;
+      saveState(true);
+      updateFlashUI();
+      renderMenu(); // Re-render menu to remove discounts
+      clearInterval(flashInterval);
+    } else {
+      updateFlashUI();
+    }
+  }, 1000);
+}
+
+/* ========= SPIN DOM ELEMENTS ========= */
+
+const spinButton = document.getElementById('spinButton');
+const spinResultEl = document.getElementById('spinResult');
+const spinWheel = document.getElementById('spinWheel');
+const spinCodePanel = document.getElementById('spinCodePanel');
+const spinCodeInput = document.getElementById('spinCodeInput');
+const spinCodeBtn = document.getElementById('spinCodeBtn');
+const spinCodeMsg = document.getElementById('spinCodeMsg');
+const silverPrizesGridEl = document.getElementById('silverPrizesGrid');
+
+const goldSpinButton = document.getElementById('goldSpinButton');
+const goldSpinResultEl = document.getElementById('goldSpinResult');
+const goldenWheel = document.getElementById('goldenWheel');
+const goldCodePanel = document.getElementById('goldCodePanel');
+const goldCodeInput = document.getElementById('goldCodeInput');
+const goldCodeBtn = document.getElementById('goldCodeBtn');
+const goldCodeMsg = document.getElementById('goldCodeMsg');
+const goldPrizesGridEl = document.getElementById('goldPrizesGrid');
+
+/* ========= SPIN HELPERS ========= */
+
+function buildPrizePool(prizes) {
+  const pool = [];
+  prizes.forEach(prize => {
+    for (let i = 0; i < prize.weight; i++) pool.push(prize);
+  });
+  return pool;
+}
+const SILVER_SPIN_POOL = buildPrizePool(SILVER_SPIN_PRIZES);
+const GOLD_SPIN_POOL = buildPrizePool(GOLDEN_SPIN_PRIZES);
+
+function randomFromPool(pool) {
+  const idx = Math.floor(Math.random() * pool.length);
+  return pool[idx];
+}
+
+/* Render Silver prize grid with highlighted big prizes */
+function renderSilverPrizeGrid() {
+  silverPrizesGridEl.innerHTML = '';
+  SILVER_SPIN_PRIZES.forEach(prize => {
+    const div = document.createElement('div');
+    div.className = 'prize-item' + (prize.tier === 'big' ? ' big-prize' : '');
+    div.innerHTML = `
+      <div class="prize-text">${prize.label}</div>
+      ${prize.value ? `<div class="prize-value">${prize.value}</div>` : ''}
+    `;
+    silverPrizesGridEl.appendChild(div);
+  });
+}
+
+/* Render Golden prizes grid */
+function renderGoldPrizeGrid() {
+  goldPrizesGridEl.innerHTML = '';
+  GOLDEN_SPIN_PRIZES.forEach(prize => {
+    const div = document.createElement('div');
+    div.className = 'prize-item' + (prize.tier === 'big' ? ' big-prize' : '');
+    div.innerHTML = `
+      <div class="prize-text">${prize.label}</div>
+      ${prize.value ? `<div class="prize-value">${prize.value}</div>` : ''}
+    `;
+    goldPrizesGridEl.appendChild(div);
+  });
+}
+
+/* ========= SILVER SPIN LOGIC ========= */
+
+function activateSilverSpin() {
+  isSilverSpinActivated = true;
+  spinButton.disabled = false;
+  spinButton.textContent = 'Хүрд эргүүлэх';
+  spinCodeInput.value = '';
+  spinCodeMsg.textContent = 'Silver Spin идэвхжсэн · Нэг удаагийн spin.';
+  spinCodeMsg.className = 'spin-code-msg spin-code-success';
+
+  setTimeout(() => {
+    spinCodePanel.style.display = 'none';
+  }, 3000);
+}
+
+function deactivateSilverSpin() {
+  isSilverSpinActivated = false;
+  spinButton.disabled = true;
+  spinButton.textContent = 'Хүрд эргүүлэхийн тулд код хийнэ үү';
+  spinCodePanel.style.display = '';
+  spinCodeMsg.textContent = 'Зөвхөн төлбөр төлсний дараа л spin хийх боломжтой.';
+  spinCodeMsg.className = 'spin-code-msg';
+}
+
+spinCodeBtn.addEventListener('click', () => {
+  const code = spinCodeInput.value.trim();
+  if (code === SPIN_ACTIVATION_CODE) {
+    activateSilverSpin();
+  } else {
+    spinCodeMsg.textContent = 'Буруу код. Зөөгчтэй холбогдон уу.';
+    spinCodeMsg.className = 'spin-code-msg spin-code-error';
+  }
+});
+
+spinCodeInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') spinCodeBtn.click();
+});
+
+spinButton.addEventListener('click', () => {
+  if (!isSilverSpinActivated || spinButton.disabled) return;
+
+  spinButton.disabled = true;
+  spinButton.classList.add('spinning');
+  spinWheel.classList.add('spinning');
+  spinButton.innerHTML = `<span class="loading-spinner"></span> Эргэж байна...`;
+
+  spinResultEl.innerHTML = `
+    <span class="spin-result-main">Эргэж байна...</span><br/>
+    <span class="spin-result-note">Амжилт хүсье!</span>
+  `;
+
+  let ticks = 0;
+  const maxTicks = 25; // Increased for longer animation
+  const tickInterval = 150; // Slower interval
+
+  const tickTimer = setInterval(() => {
+    ticks++;
+    const tempPrize = randomFromPool(SILVER_SPIN_POOL);
+    spinResultEl.innerHTML = `
+      <span class="spin-result-main">${tempPrize.label}</span><br/>
+      <span class="spin-result-note">...</span>
+    `;
+
+    if (ticks >= maxTicks) {
+      clearInterval(tickTimer);
+      const prize = randomFromPool(SILVER_SPIN_POOL);
+
+      let tierClass = 'low';
+      let prefix = 'Үр дүн';
+      if (prize.tier === 'big') {
+        tierClass = 'big';
+        prefix = 'BIG WIN 🎉';
+      } else if (prize.tier === 'mid') {
+        tierClass = 'mid';
+        prefix = 'Win!';
+      }
+
+      const valueText = (prize.tier === 'big' && prize.value)
+        ? ` (${prize.value})`
+        : '';
+
+      spinResultEl.innerHTML = `
+        <span class="spin-result-main ${tierClass}">${prefix}: ${prize.label}${valueText}</span><br/>
+        <span class="spin-result-note">Дүнгээ зөөгчид үзүүлээд шагналаа аваарай.</span>
+      `;
+
+      setTimeout(() => {
+        deactivateSilverSpin();
+        spinButton.classList.remove('spinning');
+        spinWheel.classList.remove('spinning');
+        spinButton.textContent = 'Хүрд эргүүлэхийн тулд код хийнэ үү';
+      }, 4000);
+    }
+  }, tickInterval);
+});
+
+/* ========= GOLDEN SPIN LOGIC ========= */
+
+let goldenSpinDiscountActive = false;
+
+function activateGoldSpin() {
+  isGoldSpinActivated = true;
+  goldSpinButton.disabled = false;
+  goldSpinButton.textContent = 'Golden Spin · 20,000₮';
+  goldCodeInput.value = '';
+  goldCodeMsg.textContent = 'Golden Spin идэвхжсэн · Нэг удаагийн spin.';
+  goldCodeMsg.className = 'spin-code-msg spin-code-success';
+
+  setTimeout(() => {
+    goldCodePanel.style.display = 'none';
+  }, 3000);
+}
+
+function deactivateGoldSpin() {
+  isGoldSpinActivated = false;
+  goldSpinButton.disabled = true;
+  goldSpinButton.textContent = 'Golden Spin хийхийн тулд код хийнэ үү';
+  goldSpinButton.classList.remove('discounted');
+  goldSpinButton.style.background = '';
+  goldCodePanel.style.display = '';
+  goldCodeMsg.textContent = 'Төлбөр төлсний дараа Golden spin идэвхжинэ.';
+  goldCodeMsg.className = 'spin-code-msg';
+  goldenSpinDiscountActive = false;
+}
+
+goldCodeBtn.addEventListener('click', () => {
+  const code = goldCodeInput.value.trim();
+  if (code === SPIN_ACTIVATION_CODE) {
+    activateGoldSpin();
+  } else {
+    goldCodeMsg.textContent = 'Буруу код. Зөөгчтэй шалгана уу.';
+    goldCodeMsg.className = 'spin-code-msg spin-code-error';
+  }
+});
+
+goldCodeInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') goldCodeBtn.click();
+});
+
+function applyGoldenSpinDiscountOnce() {
+  const originalText = 'Golden Spin · 20,000₮';
+  const discountText = 'Golden Spin · 10,000₮ 🔥';
+
+  goldenSpinDiscountActive = true;
+  goldSpinButton.textContent = discountText;
+  goldSpinButton.style.background = 'linear-gradient(135deg, #f97316, #facc15)';
+  goldSpinButton.classList.add('discounted');
+
+  setTimeout(() => {
+    goldenSpinDiscountActive = false;
+    goldSpinButton.textContent = originalText;
+    goldSpinButton.style.background = '';
+    goldSpinButton.classList.remove('discounted');
+  }, 60000); // 1 minute discount window
+}
+
+goldSpinButton.addEventListener('click', () => {
+  if (!isGoldSpinActivated || goldSpinButton.disabled) return;
+
+  goldSpinButton.disabled = true;
+  goldSpinButton.classList.add('spinning');
+  goldenWheel.classList.add('spinning');
+  goldSpinButton.innerHTML = `<span class="loading-spinner"></span> Эргэж байна...`;
+
+  goldSpinResultEl.innerHTML = `
+    <span class="spin-result-main">Эргэж байна...</span><br/>
+    <span class="spin-result-note">Амжилт хүсье!</span>
+  `;
+
+  let ticks = 0;
+  const maxTicks = 30; // Increased for longer animation
+  const tickInterval = 150; // Slower interval
+
+  const tickTimer = setInterval(() => {
+    ticks++;
+    const tempPrize = randomFromPool(GOLD_SPIN_POOL);
+    goldSpinResultEl.innerHTML = `
+      <span class="spin-result-main">${tempPrize.label}</span><br/>
+      <span class="spin-result-note">...</span>
+    `;
+
+    if (ticks >= maxTicks) {
+      clearInterval(tickTimer);
+      const prize = randomFromPool(GOLD_SPIN_POOL);
+
+      let tierClass = 'low';
+      let prefix = 'Үр дүн';
+      if (prize.tier === 'big') {
+        tierClass = 'big';
+        prefix = 'GOLD WIN 💎';
+      }
+
+      const valueText = prize.value ? ` (${prize.value})` : '';
+
+      goldSpinResultEl.innerHTML = `
+        <span class="spin-result-main ${tierClass}">${prefix}: ${prize.label}${valueText}</span><br/>
+        <span class="spin-result-note">Дүнгээ зөөгчид үзүүлж шагналаа аваарай.</span>
+      `;
+
+      if (prize.label.includes('50% OFF Next Spin')) {
+        applyGoldenSpinDiscountOnce();
+      }
+
+      setTimeout(() => {
+        deactivateGoldSpin();
+        goldSpinButton.classList.remove('spinning');
+        goldenWheel.classList.remove('spinning');
+        goldSpinButton.textContent = 'Golden Spin хийхийн тулд код хийнэ үү';
+      }, 4000);
+    }
+  }, tickInterval);
+});
+
+/* ========= ADMIN PANEL & STATE ========= */
+
+const ADMIN_CODE = '032328';
+const adminToggleLink = document.getElementById('adminToggleLink');
+const adminPanel = document.getElementById('adminPanel');
+const adminLoginPanel = document.getElementById('adminLoginPanel');
+const adminStatus = document.getElementById('adminStatus');
+const adminFlashSwitch = document.getElementById('adminFlashSwitch');
+const adminSpinSwitch = document.getElementById('adminSpinSwitch');
+const adminFlashDuration = document.getElementById('adminFlashDuration');
+const adminDiscountProduct = document.getElementById('adminDiscountProduct');
+const adminDiscountPercent = document.getElementById('adminDiscountPercent');
+const adminFlashPreset = document.getElementById('adminFlashPreset');
+const adminCodeInput = document.getElementById('adminCodeInput');
+const adminCodeBtn = document.getElementById('adminCodeBtn');
+const adminLoginMsg = document.getElementById('adminLoginMsg');
+const adminFlashSummary = document.getElementById('adminFlashSummary');
+
+function setSwitch(el, value) {
+  if (value) el.classList.add('on');
+  else el.classList.remove('on');
+}
+
+function getSwitch(el) {
+  return el.classList.contains('on');
+}
+
+function saveState(broadcast = false) {
+  const state = {
+    flashActive: FLASH_DEALS_ACTIVE,
+    showSpin: SHOW_SPIN,
+    flashDuration: FLASH_DURATION_SECONDS,
+    discountProduct: CURRENT_FLASH_ITEM,
+    discountPercent: CURRENT_DISCOUNT_PERCENT
+  };
+  localStorage.setItem(STATE_KEY, JSON.stringify(state));
+  if (broadcast) {
+    localStorage.setItem('flashDealUpdate', Date.now().toString());
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (!raw) return;
+    const st = JSON.parse(raw);
+    FLASH_DEALS_ACTIVE = !!st.flashActive;
+    SHOW_SPIN = st.showSpin !== false;
+    if (st.flashDuration) FLASH_DURATION_SECONDS = st.flashDuration;
+    if (st.discountProduct) CURRENT_FLASH_ITEM = st.discountProduct;
+    if (st.discountPercent) CURRENT_DISCOUNT_PERCENT = st.discountPercent;
+  } catch (e) {
+    console.warn('State load failed', e);
+  }
+}
+
+function populateProductDropdown() {
+  adminDiscountProduct.innerHTML = '<option value="">Select product</option>';
+  
+  MENU_DATA.forEach(section => {
+    section.items.forEach(item => {
+      if (item.price) {
+        const option = document.createElement('option');
+        option.value = item.name;
+        option.textContent = `${item.name} - ${formatPrice(item.price)}₮`;
+        adminDiscountProduct.appendChild(option);
+      }
+    });
+  });
+
+  if (CURRENT_FLASH_ITEM) {
+    adminDiscountProduct.value = CURRENT_FLASH_ITEM;
+  }
+}
+
+function updateFlashSummary() {
+  if (!CURRENT_FLASH_ITEM) {
+    adminFlashSummary.textContent = 'No flash deal configured yet.';
+    return;
+  }
+  adminFlashSummary.textContent =
+    `Current flash: ${CURRENT_FLASH_ITEM} at ${CURRENT_DISCOUNT_PERCENT}% for ${FLASH_DURATION_SECONDS} sec.`;
+}
+
+function applyFlashPreset(presetName) {
+  const preset = FLASH_PRESETS.find(p => p.name === presetName);
+  if (!preset) return;
+  FLASH_DURATION_SECONDS = preset.duration;
+  CURRENT_DISCOUNT_PERCENT = preset.discount;
+  adminFlashDuration.value = FLASH_DURATION_SECONDS;
+  adminDiscountPercent.value = CURRENT_DISCOUNT_PERCENT;
+  updateFlashSummary();
+  saveState(true);
+}
+
+adminFlashPreset.addEventListener('change', () => {
+  const val = adminFlashPreset.value;
+  if (val) applyFlashPreset(val);
+});
+
+adminToggleLink.addEventListener('click', () => {
+  if (adminPanel.style.display === 'block' || adminLoginPanel.style.display === 'block') {
+    adminPanel.style.display = 'none';
+    adminLoginPanel.style.display = 'none';
+    adminToggleLink.textContent = 'enter admin code';
+  } else {
+    adminPanel.style.display = 'none';
+    adminLoginPanel.style.display = 'block';
+    adminToggleLink.textContent = 'close admin';
+  }
+});
+
+adminCodeBtn.addEventListener('click', () => {
+  const code = adminCodeInput.value.trim();
+  if (code === ADMIN_CODE) {
+    adminLoginMsg.style.display = 'none';
+    adminLoginPanel.style.display = 'none';
+    adminPanel.style.display = 'block';
+    adminStatus.textContent = 'Unlocked · Use toggles carefully.';
+    populateProductDropdown();
+    updateFlashSummary();
+  } else {
+    adminLoginMsg.style.display = 'block';
+  }
+});
+
+adminFlashSwitch.addEventListener('click', () => {
+  setSwitch(adminFlashSwitch, !getSwitch(adminFlashSwitch));
+  FLASH_DEALS_ACTIVE = getSwitch(adminFlashSwitch);
+  saveState(true);
+  startFlashLoop();
+});
+
+adminSpinSwitch.addEventListener('click', () => {
+  setSwitch(adminSpinSwitch, !getSwitch(adminSpinSwitch));
+  SHOW_SPIN = getSwitch(adminSpinSwitch);
+  document.getElementById('silverSpinSection').style.display = SHOW_SPIN ? '' : 'none';
+  document.getElementById('goldSpinSection').style.display = SHOW_SPIN ? '' : 'none';
+  saveState();
+});
+
+adminFlashDuration.addEventListener('change', () => {
+  const v = parseInt(adminFlashDuration.value, 10);
+  if (!isNaN(v) && v >= 20 && v <= 7200) {
+    FLASH_DURATION_SECONDS = v;
+    saveState(true);
+    if (FLASH_DEALS_ACTIVE) startFlashLoop();
+    updateFlashSummary();
+  }
+});
+
+adminDiscountProduct.addEventListener('change', () => {
+  CURRENT_FLASH_ITEM = adminDiscountProduct.value || null;
+  saveState(true);
+  updateFlashSummary();
+});
+
+adminDiscountPercent.addEventListener('change', () => {
+  const v = parseInt(adminDiscountPercent.value, 10);
+  if (!isNaN(v) && v >= 5 && v <= 50) {
+    CURRENT_DISCOUNT_PERCENT = v;
+    saveState(true);
+    updateFlashSummary();
+  }
+});
+
+/* ========= MULTI-TAB SYNC ========= */
+
+window.addEventListener('storage', (e) => {
+  if (e.key === STATE_KEY || e.key === 'flashDealUpdate') {
+    loadState();
+    setSwitch(adminFlashSwitch, FLASH_DEALS_ACTIVE);
+    setSwitch(adminSpinSwitch, SHOW_SPIN);
+    document.getElementById('silverSpinSection').style.display = SHOW_SPIN ? '' : 'none';
+    document.getElementById('goldSpinSection').style.display = SHOW_SPIN ? '' : 'none';
+    adminFlashDuration.value = FLASH_DURATION_SECONDS;
+    adminDiscountPercent.value = CURRENT_DISCOUNT_PERCENT;
+    if (CURRENT_FLASH_ITEM && adminDiscountProduct.options.length) {
+      adminDiscountProduct.value = CURRENT_FLASH_ITEM;
+    }
+    updateFlashSummary();
+    updateFlashUI();
+    renderMenu();
+  }
+});
+
+/* ========= INIT ========= */
+
+function init() {
+  loadState();
+  renderMenu();
+  setActiveTab('all');
+
+  setSwitch(adminFlashSwitch, FLASH_DEALS_ACTIVE);
+  setSwitch(adminSpinSwitch, SHOW_SPIN);
+  adminFlashDuration.value = FLASH_DURATION_SECONDS;
+  adminDiscountPercent.value = CURRENT_DISCOUNT_PERCENT;
+  document.getElementById('silverSpinSection').style.display = SHOW_SPIN ? '' : 'none';
+  document.getElementById('goldSpinSection').style.display = SHOW_SPIN ? '' : 'none';
+
+  deactivateSilverSpin();
+  deactivateGoldSpin();
+  renderSilverPrizeGrid();
+  renderGoldPrizeGrid();
+
+  updateFlashUI();
+  if (FLASH_DEALS_ACTIVE) startFlashLoop();
+}
+
+init();
+</script>
+</body>
+</html>
